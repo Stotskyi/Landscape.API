@@ -1,0 +1,6 @@
+@Landscape.API_HostAddress = http://localhost:5103
+
+GET {{Landscape.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,8 @@
+﻿services:
+  landscape.api:
+    image: landscape.api
+    build:
+      context: .
+      dockerfile: Landscape.API/Dockerfile
+    ports:
+      - 8080:8080
