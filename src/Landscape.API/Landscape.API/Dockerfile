@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
+ARG BUILD_CONFIGURATION=Debug
 WORKDIR /app/Landscape/src
 COPY ["Landscape.API/Landscape.API.csproj", "Landscape.API/"]
 RUN dotnet restore "Landscape.API/Landscape.API.csproj"

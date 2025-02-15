@@ -1,21 +1,17 @@
 services:
-  ngnix:
+  nginx:
     image: nginx:stable-alpine
     volumes:
-      - /app/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /app/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "80:80"
     depends_on:
       - api
     networks:
       - nginx-network
-  
 
   api:
-    image: IMAGE_PLACEHOLDER
-    build:
-      context: ./Landscape/src/Landscape.API
-      dockerfile: Landscape.API/Dockerfile
+    image: IMAGE_PLACEHOLDER  # This gets replaced by the actual image tag via your CI/CD pipeline.
     expose:
       - "8080"
     networks:
@@ -29,7 +25,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./containers/database:/var/lib/postgresql/Data
+      - ./containers/database:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
