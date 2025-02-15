@@ -41,7 +41,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
-          source: "docker-compose.yml"
+          source: "docker-compose.prod.yml"
           target: "/app"
 
       - name: Copy nginx directory to Droplet
@@ -60,6 +60,12 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           script: |
+            # Install doctl if not present
+            if ! command -v doctl &> /dev/null; then
+            echo "doctl not found, installing..."
+            curl -sL https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz | tar -xzv
+            sudo mv doctl /usr/local/bin
+            fi
             doctl registry login --expiry-seconds 600
             cd /app
             docker-compose -f docker-compose.prod.yml pull
