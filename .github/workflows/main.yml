@@ -30,25 +30,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Install doctl and Authenticate
-        run: |
-          if ! command -v doctl &> /dev/null; then
-            echo "doctl not found, installing..."
-            curl -sL https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz | tar -xzv
-            sudo mv doctl /usr/local/bin
-          fi
-          doctl auth init -t "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}"
-
-      - name: Remove old images
-        run: |
-          echo "Checking for old images in repository: $IMAGE_REPO"
-          if [ ! -z "$(doctl registry repository list | grep "$IMAGE_REPO")" ]; then 
-          TAG=$(doctl registry repository list-tags $IMAGE_REPO | grep -o "sha.*")
-          echo "Attempting to delete manifest: $TAG"
-          doctl registry repository delete-manifest $IMAGE_REPO $TAG --force || echo "Failed to delete manifest $TAG - it may be referenced by other tags. Skipping deletion."
-          else 
-          echo "No repository found for $IMAGE_REPO"
-          fi
       - name: Build & Push API Image (Dev)
         uses: docker/build-push-action@v4
         with:
