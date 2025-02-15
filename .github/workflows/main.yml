@@ -52,7 +52,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           source: "nginx/"
-          target: "/app/nginx/"
+          target: "/app"
 
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@v0.1.5
