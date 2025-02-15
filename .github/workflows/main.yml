@@ -29,7 +29,7 @@ jobs:
           context: ./src/Landscape.API
           file: ./src/Landscape.API/Landscape.API/Dockerfile
           push: true
-          tags: landscape.api:dev
+          tags: ${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest
 
       - name: Copy docker-compose file to Droplet
         uses: appleboy/scp-action@v0.1.3
