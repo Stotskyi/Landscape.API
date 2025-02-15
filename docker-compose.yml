@@ -12,7 +12,7 @@ services:
   
 
   api:
-    image: landscape.api
+    image: ${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest
     build:
       context: ./Landscape/src/Landscape.API
       dockerfile: Landscape.API/Dockerfile
@@ -29,7 +29,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./Landscape/src/Landscape.API/Landscape.API/containers/database:/var/lib/postgresql/Data
+      -./containers/database:/var/lib/postgresql/Data
     ports:
       - "5432:5432"
     networks:
