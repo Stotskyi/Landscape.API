@@ -12,7 +12,7 @@ services:
   
 
   api:
-    image: ${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest
+    image: IMAGE_PLACEHOLDER
     build:
       context: ./Landscape/src/Landscape.API
       dockerfile: Landscape.API/Dockerfile
