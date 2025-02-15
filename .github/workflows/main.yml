@@ -31,6 +31,15 @@ jobs:
           push: true
           tags: ${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest
 
+      - name: Copy docker-compose file to Droplet
+        uses: appleboy/scp-action@v0.1.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          source: "docker-compose.yml"          # Adjust path if needed
+          target: "/app/docker-compose.yml" 
+          
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@v0.1.5
         with:
