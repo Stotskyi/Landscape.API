@@ -28,6 +28,6 @@ public class LandmarksController : ControllerBase
     [HttpGet("test")]
     public async Task<IActionResult> Get()
     {
-        return Ok(" i am fucking working now!");
+        return Ok(" i am fucking working now! - yep you changed and this still works impressively motherfucker!  ");
     }
 }

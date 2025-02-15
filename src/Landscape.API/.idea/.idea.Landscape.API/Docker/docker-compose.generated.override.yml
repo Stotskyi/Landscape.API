@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  api:
+    build:
+      context: "/Users/andrii/Desktop/Projects/December/Landscape/src/Landscape.API"
+      dockerfile: "Landscape.API/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/Landscape.API.dll"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "landscape.api:dev"
+    ports: []
+    volumes:
+    - "/Users/andrii/Desktop/Projects/December/Landscape/src/Landscape.API/Landscape.API:/app:rw"
+    - "/Users/andrii/Desktop/Projects/December/Landscape/src/Landscape.API:/src:rw"
+    - "/Users/andrii/.nuget/packages:/home/app/.nuget/packages"
+    working_dir: "/app"
