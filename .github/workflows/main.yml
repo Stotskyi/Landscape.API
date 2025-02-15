@@ -4,11 +4,19 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version'
+        required: true
+
+env:
+  REGISTRY: ${{ secrets.CONTAINER_NAME }}    # e.g., registry.digitalocean.com/your-registry
+  IMAGE_NAME: ${{ secrets.USERNAME }}/landscape.api
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -19,23 +27,46 @@ jobs:
       - name: Login to Container Registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ secrets.CONTAINER_NAME }}   # e.g., registry.digitalocean.com/your-registry
+          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Build & Push API Image
+      - name: Install doctl and Authenticate
+        run: |
+          if ! command -v doctl &> /dev/null; then
+            echo "doctl not found, installing..."
+            curl -sL https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz | tar -xzv
+            sudo mv doctl /usr/local/bin
+          fi
+          doctl auth init -t "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}"
+
+      - name: Remove old images
+        run: |
+          echo "Checking for old images in repository: $IMAGE_NAME"
+          if [ ! -z "$(doctl registry repository list | grep "$IMAGE_NAME")" ]; then 
+            TAG=$(doctl registry repository list-tags $IMAGE_NAME | grep -o "sha.*")
+            echo "Deleting manifest: $TAG"
+            doctl registry repository delete-manifest $IMAGE_NAME $TAG --force
+          else 
+            echo "No repository found for $IMAGE_NAME"
+          fi
+
+      - name: Build & Push API Image (Dev)
         uses: docker/build-push-action@v4
         with:
           context: ./src/Landscape.API
           file: ./src/Landscape.API/Landscape.API/Dockerfile
           push: true
-          tags: ${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest
+          build-args: |
+            BUILD_CONFIGURATION=Debug
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
       - name: Replace image placeholder in docker-compose file
         run: |
-          sed -i "s|IMAGE_PLACEHOLDER|${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest|g" docker-compose.prod.yml
-          echo "=== docker-compose.yml after sed ==="
-          cat docker-compose.yml
+          sed -i "s|IMAGE_PLACEHOLDER|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest|g" docker-compose.prod.yml
+          echo "=== docker-compose.prod.yml after sed ==="
+          cat docker-compose.prod.yml
+
       - name: Copy docker-compose file to Droplet
         uses: appleboy/scp-action@v0.1.3
         with:
@@ -43,7 +74,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           source: "docker-compose.prod.yml"
-          target: "/app"
+          target: "/app/docker-compose.prod.yml"
 
       - name: Copy nginx directory to Droplet
         uses: appleboy/scp-action@v0.1.3
@@ -52,8 +83,12 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           source: "nginx/"
-          target: "/app"
+          target: "/app/nginx/"
 
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -62,9 +97,9 @@ jobs:
           key: ${{ secrets.SSHKEY }}
           script: |
             if ! command -v doctl &> /dev/null; then
-            echo "doctl not found, installing..."
-            curl -sL https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz | tar -xzv
-            sudo mv doctl /usr/local/bin
+              echo "doctl not found, installing..."
+              curl -sL https://github.com/digitalocean/doctl/releases/download/v1.70.0/doctl-1.70.0-linux-amd64.tar.gz | tar -xzv
+              sudo mv doctl /usr/local/bin
             fi
             doctl auth init -t "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}"
             doctl registry login --expiry-seconds 600
