@@ -38,7 +38,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           source: "docker-compose.yml"          # Adjust path if needed
-          target: "/app/docker-compose.yml" 
+          target: "/app" 
           
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@v0.1.5
