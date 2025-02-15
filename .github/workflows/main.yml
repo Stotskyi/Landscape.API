@@ -40,8 +40,15 @@ jobs:
           doctl auth init -t "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}"
 
       - name: Remove old images
-        run: if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_REPO)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_REPO) $(doctl registry repository list-tags $(echo $IMAGE_REPO) | grep -o "sha.*") --force; else echo "No repository"; fi
-
+        run: |
+          echo "Checking for old images in repository: $IMAGE_REPO"
+          if [ ! -z "$(doctl registry repository list | grep "$IMAGE_REPO")" ]; then 
+          TAG=$(doctl registry repository list-tags $IMAGE_REPO | grep -o "sha.*")
+          echo "Attempting to delete manifest: $TAG"
+          doctl registry repository delete-manifest $IMAGE_REPO $TAG --force || echo "Failed to delete manifest $TAG - it may be referenced by other tags. Skipping deletion."
+          else 
+          echo "No repository found for $IMAGE_REPO"
+          fi
       - name: Build & Push API Image (Dev)
         uses: docker/build-push-action@v4
         with:
