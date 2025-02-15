@@ -1,0 +1,28 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  api:
+    build:
+      context: "/Users/andrii/Desktop/Projects/December/Landscape/src/Landscape.API"
+      dockerfile: "Landscape.API/Dockerfile"
+      args:
+        BUILD_CONFIGURATION: "Debug"
+    entrypoint:
+    - "/opt/JetBrains/RiderDebuggerTools/linux-arm64/JetBrains.Debugger.Worker"
+    - "--runtimeconfig"
+    - "/opt/JetBrains/RiderDebuggerTools/JetBrains.Debugger.Worker.runtimeconfig.json"
+    - "--mode=server"
+    - "--frontend-port=57000"
+    - "--backend-port=57200"
+    - "--roslyn-worker-port=57400"
+    - "--timeout=60"
+    environment:
+      RIDER_DEBUGGER_LOG_DIR: "/var/opt/JetBrains/RiderDebuggerTools"
+      RESHARPER_LOG_CONF: "/etc/opt/JetBrains/RiderDebuggerTools/backend-log.xml"
+    ports:
+    - "127.0.0.1:57000:57000"
+    - "127.0.0.1:57200:57200"
+    - "127.0.0.1:57400:57400"
+    volumes:
+    - "/Users/andrii/.local/share/JetBrains/RiderRemoteDebugger/2024.3/LinuxArm64:/opt/JetBrains/RiderDebuggerTools"
+    - "/Applications/Rider.app/Contents/bin/backend-log.xml:/etc/opt/JetBrains/RiderDebuggerTools/backend-log.xml"
+    - "/Users/andrii/Library/Logs/JetBrains/Rider2024.3/DebuggerWorker/JetBrains.Debugger.Worker.2025_2_05_20_46_41:/var/opt/JetBrains/RiderDebuggerTools:rw"
