@@ -50,13 +50,11 @@ jobs:
           context: ./src/Landscape.API
           file: ./src/Landscape.API/Landscape.API/Dockerfile
           push: true
-          build-args: |
-            BUILD_CONFIGURATION=Debug
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest
 
       - name: Replace image placeholder in docker-compose file
         run: |
-          sed -i "s|IMAGE_PLACEHOLDER|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest|g" docker-compose.prod.yml
+          sed -i "s|IMAGE_PLACEHOLDER|${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}:latest|g" docker-compose.prod.yml
 
       - name: Copy docker-compose file to Droplet
         uses: appleboy/scp-action@v0.1.3
