@@ -64,8 +64,6 @@ jobs:
       - name: Replace image placeholder in docker-compose file
         run: |
           sed -i "s|IMAGE_PLACEHOLDER|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest|g" docker-compose.prod.yml
-          echo "=== docker-compose.prod.yml after sed ==="
-          cat docker-compose.prod.yml
 
       - name: Copy docker-compose file to Droplet
         uses: appleboy/scp-action@v0.1.3
@@ -74,7 +72,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           source: "docker-compose.prod.yml"
-          target: "/app/docker-compose.prod.yml"
+          target: "/app"
 
       - name: Copy nginx directory to Droplet
         uses: appleboy/scp-action@v0.1.3
@@ -83,7 +81,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           source: "nginx/"
-          target: "/app/nginx/"
+          target: "/app"
 
   deploy:
     runs-on: ubuntu-latest
