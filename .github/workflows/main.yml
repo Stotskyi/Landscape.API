@@ -42,14 +42,7 @@ jobs:
 
       - name: Remove old images
         run: |
-          echo "Checking for old images in repository: $IMAGE_NAME"
-          if [ ! -z "$(doctl registry repository list | grep "$IMAGE_NAME")" ]; then 
-            TAG=$(doctl registry repository list-tags $IMAGE_NAME | grep -o "sha.*")
-            echo "Deleting manifest: $TAG"
-            doctl registry repository delete-manifest $IMAGE_NAME $TAG --force
-          else 
-            echo "No repository found for $IMAGE_NAME"
-          fi
+          if [ ! -z "$(doctl registry repository list | grep "$(echo $IMAGE_NAME)")" ]; then doctl registry repository delete-manifest $(echo $IMAGE_NAME) $(doctl registry repository list-tags $(echo $IMAGE_NAME) | grep -o "sha.*") --force; else echo "No repository"; fi
 
       - name: Build & Push API Image (Dev)
         uses: docker/build-push-action@v4
