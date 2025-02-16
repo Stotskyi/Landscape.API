@@ -25,7 +25,7 @@ if (app.Environment.IsStaging() || app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
     app.ApplyMigrations();
-    app.SeedData();
+    // app.SeedData();
 }
 
 app.UseHttpsRedirection();
