@@ -5,7 +5,11 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Console.WriteLine($"Configuration: {builder.Configuration}");
+builder.Configuration.AddJsonFile(
+    $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json",
+    optional: false,
+    reloadOnChange: true
+).AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -20,8 +24,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
-  //  app.ApplyMigrations();
-    //app.SeedData();
+    app.ApplyMigrations();
+    app.SeedData();
 }
 
 app.UseHttpsRedirection();

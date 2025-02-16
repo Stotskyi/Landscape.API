@@ -13,7 +13,7 @@ public class LandmarksController : ControllerBase
     public LandmarksController(ISender sender)
     {
         _sender = sender;
-    }
+    }    
 
     [HttpGet("{id}")]
     public async Task<IActionResult> SearchLandmarks(Guid id, CancellationToken cancellationToken)
@@ -26,8 +26,8 @@ public class LandmarksController : ControllerBase
     }
 
     [HttpGet("test")]
-    public async Task<IActionResult> Get()
+    public Task<IActionResult> Get()
     {
-        return Ok(" i am fucking working now! - yep you changed and this still works impressively motherfucker!  ");
+        return Task.FromResult<IActionResult>(Ok(" i am fucking working now! - yep you changed and this still works impressively motherfucker!  "));
     }
 }

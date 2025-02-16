@@ -20,7 +20,7 @@ services:
       - "8080"
     networks:
       - nginx-network
-
+  
   landscape.db:
     image: postgres:latest
     container_name: Landscape.Db
