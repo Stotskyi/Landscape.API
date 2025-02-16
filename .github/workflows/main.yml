@@ -40,7 +40,7 @@ jobs:
 
       - name: Replace image placeholder in docker-compose.prod file
         run: |
-          sed -i "s|IMAGE_PLACEHOLDER|${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest|g" docker-compose.prod.yml
+          sed -i "s|IMAGE_PLACEHOLDER|${{ secrets.CONTAINER_NAME }}/${{ secrets.USERNAME }}/landscape.api:latest|g" docker-compose.stage.yml
 
       - name: Copy docker-compose file to Droplet
         uses: appleboy/scp-action@v0.1.3
