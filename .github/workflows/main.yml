@@ -80,4 +80,4 @@ jobs:
             doctl registry login --expiry-seconds 600
             cd /app
             docker-compose -f docker-compose.stage.yml pull
-            docker-compose -f docker-compose.stage.yml up -d --remove-orphans -e ASPNETCORE_ENVIRONMENT=Development
+            docker-compose -f docker-compose.stage.yml up -d --remove-orphans
