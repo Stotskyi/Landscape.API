@@ -20,7 +20,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 var app = builder.Build();
 
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsStaging() || app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();

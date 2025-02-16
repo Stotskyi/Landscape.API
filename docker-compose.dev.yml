@@ -1,22 +1,27 @@
 services:
-  nginx:
+  ngnix:
     image: nginx:stable-alpine
     volumes:
-      - /app/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /app/nginx/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"
     depends_on:
       - api
     networks:
       - nginx-network
+  
 
   api:
-    image: IMAGE_PLACEHOLDER  # This gets replaced by the actual image tag via your CI/CD pipeline.
+    image: IMAGE_PLACEHOLDER
+    build:
+      context: ./Landscape/src/Landscape.API
+      dockerfile: Landscape.API/Dockerfile
     expose:
       - "8080"
     networks:
       - nginx-network
-
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development  
   landscape.db:
     image: postgres:latest
     container_name: Landscape.Db
@@ -25,7 +30,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./containers/database:/var/lib/postgresql/data
+      - ./containers/database:/var/lib/postgresql/Data
     ports:
       - "5432:5432"
     networks:

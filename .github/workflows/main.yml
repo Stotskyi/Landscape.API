@@ -48,7 +48,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
-          source: "docker-compose.prod.yml"
+          source: "docker-compose.stage.yml"
           target: "/app"
 
       - name: Copy nginx directory to Droplet
@@ -79,5 +79,5 @@ jobs:
             doctl auth init -t "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}"
             doctl registry login --expiry-seconds 600
             cd /app
-            docker-compose -f docker-compose.prod.yml pull
-            docker-compose -f docker-compose.prod.yml up -d --remove-orphans -e ASPNETCORE_ENVIRONMENT=Development
+            docker-compose -f docker-compose.stage.yml pull
+            docker-compose -f docker-compose.stage.yml up -d --remove-orphans -e ASPNETCORE_ENVIRONMENT=Development
